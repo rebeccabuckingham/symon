@@ -6,3 +6,9 @@ target
 .idea
 symon.iml
 /dependency-reduced-pom.xml
+.classpath
+.project
+*.ipr
+*.iws
+.idea/
+.settings/

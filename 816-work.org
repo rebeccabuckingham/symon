@@ -1,0 +1,57 @@
+#+TITLE: Work required to add 65c816 support to Symon
+* Analysis of existing Symon code, by package.
+** .exceptions: custom exception classes, used in various places.
+** .jterminal: used by Swing-based console.
+** .machines: interface and implementation classes for various machine types.
+  - this is where we'd add a SentinelMachine.
+*** BenEaterMachine
+*** MulticompMachine
+*** SimpleMachine
+*** SymonMachine
+** .ui: Swing based GUI
+*** VideoWindow: simulates a framebuffer using Crtc class.
+** .devices: memory mapped I/O devices
+*** DeviceChangeListener: only contains deviceStateChanged()
+**** TODO see how DeviceChangeListener is used.    
+*** Device - abstract class all other devices extend.
+  provides: 
+    size: (of memory space)
+    memoryRange: (MemoryRange) - holds startAddress, endAddress, some helper methods
+    bus: pointer to bus where this device is attached.
+    read/write: get/put memory contents
+    registerListener(DeviceChangeListener): *note* see how this is used.
+    notifyListeners(): *note* see how this is used.
+*** Acia: base class for Acia6551 & Acia6580 devices.
+*** Acia6551: Simulation of MOS 6551 ACIA (UART)
+*** Acia6850: Simulation of Motorola 6850 ACIA (UART)
+*** Crtc: Simulation of 6545 CRTC and video output. 
+  *note* Crtc doesn't do the display itself.  That's in VideoWindow.
+*** Memory: RAM/ROM simulation and loader routine.
+*** Pia: Base class for Via6522
+*** Via6522: 'very' basic implementation of MOS 6522 VIA. (I/O port controller)
+*** SdController: incomplete, maybe broken SD-card controller for multicomp machine.
+** Main Package Classes
+*** Bus: ties devices (and cpu) together.  Exposes read() and write().
+*** Cpu: Simulation of 6502 state machine.  *note* implements InstructionTable.
+*** CpuState: holds registers & flags
+*** InstructionTable: holds various things related to the CPU.
+  - opcodeNames (String array) *note* missing 65c816 info, despite what it says.
+  - instructionModes (Mode array) *note* missing 65c816 info, despite what it says.
+  - instructionSizes (int array) byte lengths for various operations.  *note* not sure if right for 65c816.
+  - instructionClocksNmos (int array) *note* not sure if right for 65c816.
+  - instructionClocksCmos (int array) *note* not sure if right for 65c816.
+  - enum CpuBehavior: not sure if this is actually used.  Does contain an entry for the 65c816.
+**** TODO look into InstructionTable.CpuBehavior usage.
+*** Main: Command-line entry point, controls Simulator.
+*** Simulator: main class for the whole thing.  listens/responds to commands from GUI.
+* brief glance tells me that the main places I need to update things are:
+** Cpu, CpuState, InstructionTable, InstructionTable.CpuBehavior
+* other things I'd want:
+  - ability to load .prg/.pgz/.s28 files.
+* questions to look into:
+** TODO How does DeviceChangeListener work?
+** TODO Can 65C816 changes be fit into Cpu, CpuState, InstructionTable classes?
+** TODO Can this thing run at 8 Mhz?  It's a lot more robust OOP-wise than jEmu816.
+* work done so far:
+  - added some minor 65c816 stuff back to Cpu.java
+  

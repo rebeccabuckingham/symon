@@ -44,7 +44,10 @@ public class Cpu implements InstructionTable {
     public static final int P_IRQ_DISABLE = 0x04;
     public static final int P_DECIMAL     = 0x08;
     public static final int P_BREAK       = 0x10;
-    // Bit 5 is always '1'
+    // Bit 4 is break flag - 6502, but index register width for 65816
+    public static final int P_IDXWIDTH    = 0x10;
+    // Bit 5 is always '1' - 6502, but acc register width for 65816
+    public static final int P_ACCWIDTH    = 0x20;
     public static final int P_OVERFLOW    = 0x40;
     public static final int P_NEGATIVE    = 0x80;
 
@@ -57,6 +60,9 @@ public class Cpu implements InstructionTable {
     // IRQ vector
     public static final int IRQ_VECTOR_L = 0xfffe;
     public static final int IRQ_VECTOR_H = 0xffff;
+
+    // TODO need 65816 vectors
+
 
     public static final long DEFAULT_CLOCK_PERIOD_IN_NS = 1000;
 
